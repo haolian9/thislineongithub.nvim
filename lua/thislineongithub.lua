@@ -1,5 +1,5 @@
 local fs = require("infra.fs")
-local jelly = require("infra.jellyfish")("thislineongithub", vim.log.levels.INFO)
+local jelly = require("infra.jellyfish")("thislineongithub", "info")
 local prefer = require("infra.prefer")
 local strlib = require("infra.strlib")
 local subprocess = require("infra.subprocess")
@@ -74,12 +74,12 @@ return function()
       jelly.debug("namespace=%s", namespace)
     end
 
-    local reversion
+    local commit
     do
       local cp = subprocess.run("git", { args = { "rev-parse", "HEAD" }, cwd = git_root }, true)
       if cp.exit_code ~= 0 then return jelly.warn("unable to resolve HEAD rev") end
-      reversion = cp.stdout()
-      if not (reversion ~= nil and reversion ~= "") then return jelly.err("unreachable: empty HEAD reversion") end
+      commit = cp.stdout()
+      if not (commit ~= nil and commit ~= "") then return jelly.err("unreachable: empty HEAD hash") end
     end
 
     ---0-indexed
@@ -90,7 +90,7 @@ return function()
     end
 
     --sample: https://github.com/haolian9/fstr.nvim/blob/89c0f58273d89d6098f3154fa68ec7cf2d02f063/lua/fstr.lua#L4-L6
-    line_uri = string.format("https://github.com/%s/blob/%s/%s#L%d", namespace, reversion, rel_fpath, lnum + 1)
+    line_uri = string.format("https://github.com/%s/blob/%s/%s#L%d", namespace, commit, rel_fpath, lnum + 1)
   end
 
   return line_uri
