@@ -1,3 +1,4 @@
+local bufpath = require("infra.bufpath")
 local fs = require("infra.fs")
 local jelly = require("infra.jellyfish")("thislineongithub", "info")
 local prefer = require("infra.prefer")
@@ -10,19 +11,8 @@ return function()
   local winid = api.nvim_get_current_win()
   local bufnr = api.nvim_win_get_buf(winid)
 
-  if prefer.bo(bufnr, "buftype") ~= "" then return jelly.warn("not a regular file buffer") end
-
-  local fpath
-  do
-    local bufname = api.nvim_buf_get_name(bufnr)
-    if bufname == "" then return jelly.warn("unnamed buffer") end
-    if strlib.startswith(bufname, "/") then
-      fpath = bufname
-    else
-      fpath = vim.fn.fnamemodify(bufname, "%:p")
-    end
-    jelly.debug("fpath=%s", fpath)
-  end
+  local fpath = bufpath.file(bufnr)
+  if fpath == nil then return jelly.info("no file associated to buf#%d", bufnr) end
 
   local git_root
   do
