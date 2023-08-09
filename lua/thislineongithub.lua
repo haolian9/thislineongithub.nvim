@@ -34,7 +34,6 @@ return function()
 
     local remote_uri
     do
-      --todo: hardcoded: origin
       local cp = subprocess.run("git", { args = { "remote", "get-url", "origin" }, cwd = git_root }, true)
       if cp.exit_code ~= 0 then return jelly.warn("unable to resolve the remote uri") end
       remote_uri = cp.stdout()
