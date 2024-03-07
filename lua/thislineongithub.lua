@@ -1,7 +1,6 @@
 local bufpath = require("infra.bufpath")
 local fs = require("infra.fs")
 local jelly = require("infra.jellyfish")("thislineongithub", "info")
-local prefer = require("infra.prefer")
 local strlib = require("infra.strlib")
 local subprocess = require("infra.subprocess")
 
