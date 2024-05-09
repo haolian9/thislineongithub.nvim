@@ -3,6 +3,7 @@ local fs = require("infra.fs")
 local jelly = require("infra.jellyfish")("thislineongithub", "info")
 local strlib = require("infra.strlib")
 local subprocess = require("infra.subprocess")
+local wincursor = require("infra.wincursor")
 
 local api = vim.api
 
@@ -70,15 +71,10 @@ return function()
       if not (commit ~= nil and commit ~= "") then return jelly.err("unreachable: empty HEAD hash") end
     end
 
-    ---0-indexed
-    local lnum
-    do
-      local cursor = api.nvim_win_get_cursor(winid)
-      lnum = cursor[1] - 1
-    end
+    local cursor_row = wincursor.row(winid)
 
     --sample: https://github.com/haolian9/fstr.nvim/blob/89c0f58273d89d6098f3154fa68ec7cf2d02f063/lua/fstr.lua#L4-L6
-    line_uri = string.format("https://github.com/%s/blob/%s/%s#L%d", namespace, commit, rel_fpath, lnum + 1)
+    line_uri = string.format("https://github.com/%s/blob/%s/%s#L%d", namespace, commit, rel_fpath, cursor_row)
   end
 
   return line_uri
