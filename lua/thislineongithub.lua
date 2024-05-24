@@ -16,10 +16,11 @@ return function()
 
   local git_root
   do
-    local cp = subprocess.run("git", { args = { "rev-parse", "--show-toplevel" }, cwd = fs.parent(fpath) }, true)
+    local cp = subprocess.run("git", { args = { "rev-parse", "--show-toplevel" }, cwd = fs.parent(fpath) }, "raw")
     if cp.exit_code ~= 0 then return jelly.warn("unable to resolve git root") end
     git_root = cp.stdout()
     if not (git_root ~= nil and git_root ~= "") then return jelly.err("unreachable: empty git_root") end
+    git_root = strlib.rstrip(git_root)
     jelly.debug("git_root=%s", git_root)
   end
 
@@ -34,10 +35,11 @@ return function()
 
     local remote_uri
     do
-      local cp = subprocess.run("git", { args = { "remote", "get-url", "origin" }, cwd = git_root }, true)
+      local cp = subprocess.run("git", { args = { "remote", "get-url", "origin" }, cwd = git_root }, "raw")
       if cp.exit_code ~= 0 then return jelly.warn("unable to resolve the remote uri") end
       remote_uri = cp.stdout()
       if not (remote_uri ~= nil and remote_uri ~= "") then return jelly.err("unreachable: empty remote_uri") end
+      remote_uri = strlib.rstrip(remote_uri)
       jelly.debug("remote_uri=%s", remote_uri)
     end
 
@@ -65,10 +67,11 @@ return function()
 
     local commit
     do
-      local cp = subprocess.run("git", { args = { "rev-parse", "HEAD" }, cwd = git_root }, true)
+      local cp = subprocess.run("git", { args = { "rev-parse", "HEAD" }, cwd = git_root }, "raw")
       if cp.exit_code ~= 0 then return jelly.warn("unable to resolve HEAD rev") end
       commit = cp.stdout()
       if not (commit ~= nil and commit ~= "") then return jelly.err("unreachable: empty HEAD hash") end
+      commit = strlib.rstrip(commit)
     end
 
     local cursor_row = wincursor.row(winid)
