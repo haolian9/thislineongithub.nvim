@@ -1,15 +1,14 @@
 local bufpath = require("infra.bufpath")
 local fs = require("infra.fs")
 local jelly = require("infra.jellyfish")("thislineongithub", "info")
+local ni = require("infra.ni")
 local strlib = require("infra.strlib")
 local subprocess = require("infra.subprocess")
 local wincursor = require("infra.wincursor")
 
-local api = vim.api
-
 return function()
-  local winid = api.nvim_get_current_win()
-  local bufnr = api.nvim_win_get_buf(winid)
+  local winid = ni.get_current_win()
+  local bufnr = ni.win_get_buf(winid)
 
   local fpath = bufpath.file(bufnr)
   if fpath == nil then return jelly.info("no file associated to buf#%d", bufnr) end
